@@ -10,5 +10,5 @@ def run_project(path: Path) -> None:
 
 
 if __name__ == "__main__":
-    run_project(PROJECT_ROOT / "1" / "stars.py")
+    # run_project(PROJECT_ROOT / "1" / "stars.py")
     run_project(PROJECT_ROOT / "1" / "trajectory.py")
