@@ -50,6 +50,18 @@ Run the trajectory simulation with:
 python3 1/trajectory.py
 ```
 
+## Run everything from one file
+
+[`main.py`](main.py) is the central entry point. It runs the projects in
+order, so you can use one command:
+
+```bash
+python3 main.py
+```
+
+The star field appears first in the terminal. The trajectory animation then
+opens in a Matplotlib window. Close the animation window when you are done.
+
 ## Repository structure
 
 ```text
@@ -57,6 +69,7 @@ python3 1/trajectory.py
 ├── 1/
 │   ├── stars.py
 │   └── trajectory.py
+├── main.py
 └── README.md
 ```
 
