@@ -1,0 +1,7 @@
+ENG 1112 Project 1
+Student number: 222688261
+Your safety threshold: 21.9 N
+Your data file: data_222688261.csv
+
+When your program asks for the threshold, type 21.9
+When it asks for the data file, type data_222688261.csv (keep the file in the same folder as your program).
