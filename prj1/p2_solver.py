@@ -27,7 +27,7 @@ dl = 0
 nf = 0
 
 for line in file:
-    line = line.strip()
+    line = line.strip() #spaces, new line \n ...
     if line == "":
         continue
 
