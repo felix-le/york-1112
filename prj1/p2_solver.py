@@ -26,6 +26,7 @@ pd = 0
 dl = 0
 nf = 0
 
+total_team_numb = 0
 for line in file:
     line = line.strip() #spaces, new line \n ...
     if line == "":
@@ -42,6 +43,7 @@ for line in file:
     # The team changed: the previous team is finished.
     # First row has previous_team empty, so it never triggers this.
     if previous_team != "" and team != previous_team:
+        total_team_numb += 1
         print(previous_team + ": " + format(team_max, ".2f") + " N")
         total = total + team_max
         count = count + 1
@@ -80,17 +82,8 @@ for line in file:
     previous_team = team
 
 file.close()
+print("Close Read File Function - Done")
 
-# The last team has no next team to trigger it, so finish it here.
-# Same five actions as the team change above.
-# (If the file had no data rows, previous_team is still empty: skip.)
-if previous_team != "":
-    print(previous_team + ": " + format(team_max, ".2f") + " N")
-    total = total + team_max
-    count = count + 1
-    if team_max < threshold:
-        print("FLAG " + previous_team + ": below threshold by "
-              + format(threshold - team_max, ".2f") + " N")
 
 # Class average: one division at the end of an accumulation loop.
 if count > 0:
@@ -112,3 +105,18 @@ if dl > 0:
     print("DL: " + str(dl))
 if nf > 0:
     print("NF: " + str(nf))
+
+
+print("Total team report:",total_team_numb)
+
+
+# The last team has no next team to trigger it, so finish it here.
+# Same five actions as the team change above.
+# (If the file had no data rows, previous_team is still empty: skip.)
+# if previous_team != "":
+#     print(previous_team + ": " + format(team_max, ".2f") + " N")
+#     total = total + team_max
+#     count = count + 1
+#     if team_max < threshold:
+#         print("FLAG ===========" + previous_team + ": below threshold by "
+#               + format(threshold - team_max, ".2f") + " N")
