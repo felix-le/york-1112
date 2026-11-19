@@ -7,8 +7,9 @@ import time
 from linsolve import solve  # the Project 2 solver, see Part B of the guide
 
 SENSOR_ANGLE = 40.0   # your personal angle, in degrees
-ECHO_TIME_1 = 662.9   # your average echo time at 10 cm, in microseconds
-ECHO_TIME_2 = 1662.5  # your average echo time at 30 cm, in microseconds
+ECHO_TIME_1 = 662   # your average echo time at 10 cm, in microseconds
+ECHO_TIME_2 = 1662  # your average echo time at 30 cm, in microseconds
+
 DISTANCE_1 = 10.0     # the two reference distances, in cm
 DISTANCE_2 = 30.0
 REST_ANGLE = 90       # servo angle when nothing is near
@@ -16,42 +17,59 @@ AWAY_ANGLE = 150      # servo angle that swings the arm away
 
 
 def calibration(echo_time_1, echo_time_2):
+    matrix = [[echo_time_1, 1, DISTANCE_1],[echo_time_2, 1, DISTANCE_2]]
+
+    sol = solve(2, matrix)
+
     # Two echo times in microseconds go in. Build the augmented matrix of the 2 by 2 system
     # a * t + b = d  through the two reference points, solve it with solve(), and return
     # a (in cm per microsecond) and b (in cm).
-    a = 0.0  # replace these two lines
-    b = 0.0
+    if sol is None:
+        raise ValueError("Calibration echo times must be distinct")
+    a = sol[0]
+    b = sol[1]
     return a, b
 
 
 def distance(echo_time, a, b):
     # The calibration line: an echo time in microseconds goes in, a distance in cm comes out.
-    return 0.0  # replace this line
+    return a * echo_time + b
 
 
 def rotation(angle_in_degrees):
     # An angle in degrees goes in. Returns the 2 by 2 rotation matrix [[cos, -sin], [sin, cos]]
     # as a list of two lists. Its entries have no units.
-    return [[1.0, 0.0], [0.0, 1.0]]  # replace this line
+    angle_in_radians = math.radians(angle_in_degrees)
+    c = math.cos(angle_in_radians)
+    s = math.sin(angle_in_radians)
+    return [[c, -s], [s, c]]
 
 
 def dot_product(vector_1, vector_2):
     # Two vectors of equal size go in, one number comes out: the sum of the products of the
     # matching entries. Write it with a loop, so that it works for vectors of any size.
-    return 0.0  # replace this line
+    total = 0.0
+    for index in range(len(vector_1)):
+        total += vector_1[index] * vector_2[index]
+    return total
 
 
 def apply(matrix, vector):
     # A matrix times a vector of compatible size: every row of the matrix has as many entries
     # as the vector. Returns a list with one number for each row, the dot product of that row
     # with the vector.
-    return [0.0, 0.0]  # replace this line
+    result = []
+    for row in matrix:
+        result.append(dot_product(row, vector))
+    return result
 
 
 def sensor_to_bench(echo_time, a, b, rotation_matrix):
     # Compose: echo time in microseconds -> distance r in cm -> the vector [r, 0] in the sensor
     # frame -> bench frame. Returns the list [x, y], in cm.
-    return [0.0, 0.0]  # replace this line
+    r = distance(echo_time, a, b)
+    sensor_vector = [r, 0.0]
+    return apply(rotation_matrix, sensor_vector)
 
 
 def threshold_from_knob(knob):
@@ -59,12 +77,14 @@ def threshold_from_knob(knob):
     return 5.0 + 45.0 * knob / 1023.0
 
 
-def read_line(source, replay):
+def read_line(source, replay) -> str:
     # The next line of readings as text, or "" when there are no more.
     if replay:
         line = source.readline()
     else:
         line = source.readline().decode(errors="ignore")
+    if isinstance(line, bytes):
+        line = line.decode(errors="ignore")
     return line.strip()
 
 
@@ -75,6 +95,10 @@ def send(source, replay, command):
     else:
         source.write((command + "\n").encode())
 
+
+
+a,b = calibration(ECHO_TIME_1, ECHO_TIME_2)
+print(sensor_to_bench(953, a, b, rotation(40)))
 
 # here the main code starts
 print("Replay file or port: ", end="")
