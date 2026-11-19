@@ -1,0 +1,3 @@
+ENG 1112 Project 2 personal load case for student 222688261
+P = 39.1 N downward at joint D
+Q = 9.8 N downward at joint C
