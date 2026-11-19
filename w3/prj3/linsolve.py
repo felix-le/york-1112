@@ -4,7 +4,6 @@
 # You may replace copy() and solve() with your own from Project 2. Paste the functions and the
 # TOLERANCE line only. Leave out the main code at the bottom of your Project 2 file: Python runs
 # everything in a file when the file is imported, so that code would stop and ask for a system file.
-
 TOLERANCE = 1e-9  # a pivot smaller than this counts as zero
 
 

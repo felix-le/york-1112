@@ -3,6 +3,7 @@
 # Test with the replay file sample_readings.csv first, then with the Arduino.
 
 import math
+import os
 import time
 from linsolve import solve  # the Project 2 solver, see Part B of the guide
 
@@ -97,15 +98,17 @@ def send(source, replay, command):
 
 
 
-a,b = calibration(ECHO_TIME_1, ECHO_TIME_2)
-print(sensor_to_bench(953, a, b, rotation(40)))
+# a,b = calibration(ECHO_TIME_1, ECHO_TIME_2)
+# print(sensor_to_bench(953, a, b, rotation(40)))
 
 # here the main code starts
 print("Replay file or port: ", end="")
-name = input()
-replay = name.endswith(".csv")
+name = input().strip()
+if not name.endswith(".csv"):
+    name += ".csv"
+replay = os.path.isfile(os.path.join(os.path.dirname(__file__), name))
 if replay:
-    source = open(name)
+    source = open(os.path.join(os.path.dirname(__file__), name))
     source.readline()  # the first line is the header, skip it
 else:
     import serial  # the pyserial package, installed once with: pip install pyserial
@@ -116,6 +119,7 @@ else:
 
 a, b = calibration(ECHO_TIME_1, ECHO_TIME_2)
 rotation_matrix = rotation(SENSOR_ANGLE)
+near = False
 
 line = read_line(source, replay)
 while line != "":
@@ -124,12 +128,18 @@ while line != "":
         echo_time = float(parts[0])
         knob = float(parts[1])
         if echo_time > 0:  # the sensor reports 0 when nothing is in range
-            # 1. convert echo_time to the bench-frame position [x, y] and print it
-            # 2. get the threshold from the knob
-            # 3. decide if the object is near, and send the commands only when the decision
-            #    changes: "l1" and "s" + str(AWAY_ANGLE) when it becomes near,
-            #    "l0" and "s" + str(REST_ANGLE) when it stops being near
-            pass  # pass does nothing, remove it once the steps are written
+            position = sensor_to_bench(echo_time, a, b, rotation_matrix)
+            print(position)
+
+            threshold = threshold_from_knob(knob)
+            if not near and position[0] < threshold - 3.0:
+                near = True
+                send(source, replay, "l1")
+                send(source, replay, "s" + str(AWAY_ANGLE))
+            elif near and position[0] > threshold + 3.0:
+                near = False
+                send(source, replay, "l0")
+                send(source, replay, "s" + str(REST_ANGLE))
     if replay:
         time.sleep(0.05)
     line = read_line(source, replay)
