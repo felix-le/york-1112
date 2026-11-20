@@ -1,0 +1,3 @@
+ENG 1112 Project 3 personal parameters for student 222688261
+Sensor angle: 40 degrees between the line of sight and the x axis
+Target point in the bench frame: (22, 12) cm

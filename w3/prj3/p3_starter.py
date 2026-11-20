@@ -44,7 +44,7 @@ def rotation(angle_in_degrees):
     c = math.cos(angle_in_radians)
     s = math.sin(angle_in_radians)
     return [[c, -s], [s, c]]
-
+# print(rotation(0))
 
 def dot_product(vector_1, vector_2):
     # Two vectors of equal size go in, one number comes out: the sum of the products of the
@@ -53,6 +53,8 @@ def dot_product(vector_1, vector_2):
     for index in range(len(vector_1)):
         total += vector_1[index] * vector_2[index]
     return total
+
+# print(dot_product([1, 2, 3], [4, 5, 6])) -> 32
 
 
 def apply(matrix, vector):
@@ -95,18 +97,19 @@ def send(source, replay, command):
         print("  ->", command)
     else:
         source.write((command + "\n").encode())
-
-
-
+#  dot_product([1, 2, 3], [4, 5, 6])
 # a,b = calibration(ECHO_TIME_1, ECHO_TIME_2)
 # print(sensor_to_bench(953, a, b, rotation(40)))
 
 # here the main code starts
 print("Replay file or port: ", end="")
 name = input().strip()
+#fixed file path for Mac OS
+
 if not name.endswith(".csv"):
     name += ".csv"
-replay = os.path.isfile(os.path.join(os.path.dirname(__file__), name))
+replay = os.path.isfile(os.path.join(os.path.dirname(__file__), name)) 
+
 if replay:
     source = open(os.path.join(os.path.dirname(__file__), name))
     source.readline()  # the first line is the header, skip it
