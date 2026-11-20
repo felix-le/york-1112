@@ -1,4 +1,4 @@
-# ENG 1112 - Project 3 - starter file
+# ENG 1112 Project 3 Pipeline, Felix Le, 222688261
 # Write the six functions marked "replace", then the three numbered steps in the loop at the bottom.
 # Test with the replay file sample_readings.csv first, then with the Arduino.
 
@@ -8,8 +8,8 @@ import time
 from linsolve import solve  # the Project 2 solver, see Part B of the guide
 
 SENSOR_ANGLE = 40.0   # your personal angle, in degrees
-ECHO_TIME_1 = 662   # your average echo time at 10 cm, in microseconds
-ECHO_TIME_2 = 1662  # your average echo time at 30 cm, in microseconds
+ECHO_TIME_1 = 598   # your average echo time at 10 cm, in microseconds
+ECHO_TIME_2 = 1669.8  # your average echo time at 30 cm, in microseconds
 
 DISTANCE_1 = 10.0     # the two reference distances, in cm
 DISTANCE_2 = 30.0
@@ -104,14 +104,11 @@ def send(source, replay, command):
 # here the main code starts
 print("Replay file or port: ", end="")
 name = input().strip()
-#fixed file path for Mac OS
-
-if not name.endswith(".csv"):
-    name += ".csv"
-replay = os.path.isfile(os.path.join(os.path.dirname(__file__), name)) 
+path = os.path.join(os.path.dirname(os.path.abspath(__file__)), name)
+replay = os.path.isfile(path)
 
 if replay:
-    source = open(os.path.join(os.path.dirname(__file__), name))
+    source = open(path)
     source.readline()  # the first line is the header, skip it
 else:
     import serial  # the pyserial package, installed once with: pip install pyserial
@@ -135,7 +132,7 @@ while line != "":
             print(position)
 
             threshold = threshold_from_knob(knob)
-            if not near and position[0] < threshold - 3.0:
+            if not near and position[0] < threshold:
                 near = True
                 send(source, replay, "l1")
                 send(source, replay, "s" + str(AWAY_ANGLE))
